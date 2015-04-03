@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/bhawani-pt538/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/22.0.0/support-annotations-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
+        <dex dex="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/pre-dexed/debug/support-annotations-22.0.0-e9293ece4d7ead47643b3ced695ea4355e0a432e.jar" />
+    </item>
+    <item
+        jar="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/libs/internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
+        <dex dex="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-5691ddd3ec276f72aefa60889b7f1e9a7a8c02e2.jar" />
+    </item>
+    <item
+        jar="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
+        <dex dex="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/pre-dexed/debug/classes-4c32d79067606dcc9a9633564612ca6f70a48c0e.jar" />
+    </item>
+    <item
+        jar="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
+        <dex dex="/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/build/intermediates/pre-dexed/debug/classes-51cc8ca940310a61ce46df9672c6f7f691cdf9a8.jar" />
+    </item>
+
+</items>

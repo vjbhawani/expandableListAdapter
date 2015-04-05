@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,23 +42,25 @@ public class MainActivity extends Activity {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
-        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
-                Toast.makeText(
-                        getApplicationContext(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();
-                return false;
-            }
-        });
+
+//        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//
+//            @Override
+//            public boolean onChildClick(ExpandableListView parent, View v,
+//                                        int groupPosition, int childPosition, long id) {
+//                // TODO Auto-generated method stub
+//                Toast.makeText(
+//                        getApplicationContext(),
+//                        listDataHeader.get(groupPosition)
+//                                + " : "
+//                                + listDataChild.get(
+//                                listDataHeader.get(groupPosition)).get(
+//                                childPosition), Toast.LENGTH_SHORT)
+//                        .show();
+//                return false;
+//            }
+//        });
     }
 
     /*
@@ -71,24 +74,7 @@ public class MainActivity extends Activity {
         listDataHeader.add("Top 250");
         listDataHeader.add("Now Showing");
         listDataHeader.add("Coming Soon..");
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+
 
 
         // Adding child data
@@ -148,7 +134,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition,
+    public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
         final String childText = (String) getChild(groupPosition, childPosition);
@@ -158,6 +144,30 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item, null);
         }
+        final View cView = convertView;
+        Button plusButton = (Button) convertView.findViewById(R.id.plusButton);
+        plusButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
+                TextView textView =(TextView) cView.findViewById(R.id.countTextView);
+                int currentValue = Integer.parseInt((String)textView.getText());
+                currentValue++;
+                textView.setText(Integer.toString(currentValue));
+            }
+        });
+
+        Button minusButton = (Button) convertView.findViewById(R.id.minusButton);
+        minusButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
+                TextView textView =(TextView) cView.findViewById(R.id.countTextView);
+                int currentValue = Integer.parseInt((String)textView.getText());
+                currentValue--;
+                if(currentValue >= 0) {
+                    textView.setText(Integer.toString(currentValue));
+                }
+            }
+        });
 
         //TextView txtListChild = (TextView) convertView
                // .findViewById(R.id.lblListItem);

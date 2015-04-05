@@ -3,8 +3,11 @@ package com.example.bhawani_pt538.adaptersbasics;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,18 +28,26 @@ public class MainActivity extends Activity {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+    SQLiteDatabase sqLiteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //open or create database
+        sqLiteDatabase = openOrCreateDatabase("systemdb",MODE_PRIVATE,null);
+
+        //create table and initialize table
+        createAndInitTable();
+
+
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         // preparing list data
-        prepareListData();
-
+//        prepareListData();
+        prepareListDataFromDB();
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
         // setting list adapter
@@ -61,6 +72,65 @@ public class MainActivity extends Activity {
 //                return false;
 //            }
 //        });
+    }
+    private  void createAndInitTable() {
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT DISTINCT tbl_name from sqlite_master where tbl_name = 'MenuVerTable'", null);
+        if(false) {
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS MenuVerTable( version FLOAT, group_name VARCHAR, child_name VARCHAR, price FLOAT);");
+
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CAFE MOCHA','145');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','NUTTY AFFAIR','145');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','OREO O OREO','165');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CHOCOLATE BANANA SHAKE','145');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','MADRAS MILKSHAKE','145');");
+
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','CUTTING EDGE CHAI','75');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','FILTER KAAPI','75');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','DIVINE HOT CHOCOLATE','145');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','HAND BEATEN COFFEE','85');");
+
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','THE TOADSTOOL SALAD','159');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','ROASTED EGGPLANT SALAD','159');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','CHICKEN CAME FIRST','179');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','GRACIAS','179');");
+
+        }
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS OrderHistoryTable(order_no INT, group_index INT, child_index INT, no_of_childs INT);");
+
+    }
+    private void prepareListDataFromDB() {
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+        HashMap<String,List<String>> hashMap = new HashMap<>();
+
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM MenuVerTable",null);
+        int i =1;
+        while(cursor.moveToNext()) {
+//            Log.d("working","version: "+cursor.getFloat(0)+",group name:"+cursor.getString(1)+",child name:"+cursor.getString(2)+cursor.getFloat(3));
+            if(hashMap.containsKey(cursor.getString(1))) {
+                ArrayList<String> arrayList = (ArrayList)hashMap.get(cursor.getString(1));
+                arrayList.add(cursor.getString(2));
+            } else {
+                ArrayList<String> arrayList = new ArrayList<>();
+                arrayList.add(cursor.getString(2));
+                hashMap.put(cursor.getString(1),arrayList);
+            }
+
+        }
+//        Iterator<String> iterator = (Iterator<String>) hashMap.keySet();
+//        while (iterator.hasNext()) {
+//            Log.d("hasMap keys",iterator.toString());
+//            iterator.next();
+//        }
+        Log.d("size", "" +hashMap.size());
+        for(String key: hashMap.keySet()) {
+            Log.d("group name", "" +key);
+            listDataHeader.add(key);
+            listDataChild.put(key,hashMap.get(key));
+            for(String value: hashMap.get(key)) {
+                Log.d("child name",value);
+            }
+        }
     }
 
     /*
@@ -145,6 +215,14 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.list_item, null);
         }
         final View cView = convertView;
+
+        // initializing itemTextView
+
+        TextView textView = (TextView) convertView.findViewById(R.id.itemTextView);
+        String childName = (String) getChild(groupPosition,childPosition);
+        textView.setText(childName);
+
+        
         Button plusButton = (Button) convertView.findViewById(R.id.plusButton);
         plusButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {

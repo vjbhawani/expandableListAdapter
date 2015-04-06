@@ -3,6 +3,7 @@ package com.example.bhawani_pt538.adaptersbasics;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -15,7 +16,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,15 +28,20 @@ public class MainActivity extends Activity {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-    SQLiteDatabase sqLiteDatabase;
+    public static SQLiteDatabase sqLiteDatabase;
+    int orderNo = 0;
+//    ArrayList<List<Integer>> indexContainer = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        HashMap<Integer,List<HashMap<Integer,List<Integer>>>> phaadHashMap = new HashMap<>();
+
+
         //open or create database
-        sqLiteDatabase = openOrCreateDatabase("systemdb",MODE_PRIVATE,null);
+        sqLiteDatabase = openOrCreateDatabase("systemdb", MODE_PRIVATE,null);
 
         //create table and initialize table
         createAndInitTable();
@@ -53,7 +58,19 @@ public class MainActivity extends Activity {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
+        final Intent intent = new Intent(this,OrderHistory.class);
 
+
+        Button submitButton = (Button) findViewById(R.id.submitButton);
+        submitButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+//                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable;",null);
+//                while(cursor.moveToNext()) {
+//                    Log.d("orderHistoryTable",cursor.getInt(0)+","+cursor.getInt(1)+","+cursor.getInt(2)+","+cursor.getInt(3));
+//                }
+                startActivity(intent);
+            }
+        });
 
 //        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 //
@@ -73,6 +90,10 @@ public class MainActivity extends Activity {
 //            }
 //        });
     }
+//    public  void updateIndexContainer(int groupIndex,int childIndex,int noChilds) {
+//
+//
+//    }
     private  void createAndInitTable() {
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT DISTINCT tbl_name from sqlite_master where tbl_name = 'MenuVerTable'", null);
         if(false) {
@@ -122,60 +143,60 @@ public class MainActivity extends Activity {
 //            Log.d("hasMap keys",iterator.toString());
 //            iterator.next();
 //        }
-        Log.d("size", "" +hashMap.size());
+//        Log.d("size", "" +hashMap.size());
         for(String key: hashMap.keySet()) {
-            Log.d("group name", "" +key);
+//            Log.d("group name", "" +key);
             listDataHeader.add(key);
             listDataChild.put(key,hashMap.get(key));
-            for(String value: hashMap.get(key)) {
-                Log.d("child name",value);
-            }
+//            for(String value: hashMap.get(key)) {
+//                Log.d("child name",value);
+//            }
         }
     }
 
     /*
      * Preparing the list data
      */
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-
-        // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-
-
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
-    }
+//    private void prepareListData() {
+//        listDataHeader = new ArrayList<String>();
+//        listDataChild = new HashMap<String, List<String>>();
+//
+//        // Adding child data
+//        listDataHeader.add("Top 250");
+//        listDataHeader.add("Now Showing");
+//        listDataHeader.add("Coming Soon..");
+//
+//
+//
+//        // Adding child data
+//        List<String> top250 = new ArrayList<String>();
+//        top250.add("The Shawshank Redemption");
+//        top250.add("The Godfather");
+//        top250.add("The Godfather: Part II");
+//        top250.add("Pulp Fiction");
+//        top250.add("The Good, the Bad and the Ugly");
+//        top250.add("The Dark Knight");
+//        top250.add("12 Angry Men");
+//
+//        List<String> nowShowing = new ArrayList<String>();
+//        nowShowing.add("The Conjuring");
+//        nowShowing.add("Despicable Me 2");
+//        nowShowing.add("Turbo");
+//        nowShowing.add("Grown Ups 2");
+//        nowShowing.add("Red 2");
+//        nowShowing.add("The Wolverine");
+//
+//        List<String> comingSoon = new ArrayList<String>();
+//        comingSoon.add("2 Guns");
+//        comingSoon.add("The Smurfs 2");
+//        comingSoon.add("The Spectacular Now");
+//        comingSoon.add("The Canyons");
+//        comingSoon.add("Europa Report");
+//
+//        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
+//        listDataChild.put(listDataHeader.get(1), nowShowing);
+//        listDataChild.put(listDataHeader.get(2), comingSoon);
+//    }
 }
 
 class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -184,18 +205,31 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<String>> _listDataChild;
+    static public int orderNo = 0;
+
+
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<String>> listChildData) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
+        Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select MAX(order_no) from OrderHistoryTable;",null);
+        cursor.moveToFirst();
+        if(cursor.getCount() !=0) {
+
+            orderNo = cursor.getInt(0);
+            orderNo++;
+            Log.d("no of rows","" +orderNo);
+        }
+
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
         return this._listDataChild.get(this._listDataHeader.get(groupPosition))
                 .get(childPosititon);
+
     }
 
     @Override
@@ -222,35 +256,52 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         String childName = (String) getChild(groupPosition,childPosition);
         textView.setText(childName);
 
-        
+
         Button plusButton = (Button) convertView.findViewById(R.id.plusButton);
         plusButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
-                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
+//                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
                 TextView textView =(TextView) cView.findViewById(R.id.countTextView);
                 int currentValue = Integer.parseInt((String)textView.getText());
                 currentValue++;
                 textView.setText(Integer.toString(currentValue));
+
+                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable where order_no='"+orderNo+"'and group_index='"+groupPosition+"' and child_index='"+childPosition+"';",null);
+                cursor.moveToFirst();
+                if(cursor.getCount() !=0) {
+                    MainActivity.sqLiteDatabase.execSQL("UPDATE OrderHistoryTable SET no_of_childs ='" + currentValue + "' where order_no='" + orderNo + "'and group_index='" + groupPosition + "' and child_index='" + childPosition + "';");
+                } else {
+                    MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('"+orderNo+"','"+groupPosition+"','"+childPosition+"','"+currentValue+"');");
+                }
+
             }
+
+
         });
 
         Button minusButton = (Button) convertView.findViewById(R.id.minusButton);
         minusButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
-                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
+//                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
                 TextView textView =(TextView) cView.findViewById(R.id.countTextView);
                 int currentValue = Integer.parseInt((String)textView.getText());
                 currentValue--;
                 if(currentValue >= 0) {
                     textView.setText(Integer.toString(currentValue));
                 }
+
+                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable where order_no='"+orderNo+"'and group_index='"+groupPosition+"' and child_index='"+childPosition+"';",null);
+                cursor.moveToFirst();
+                if(cursor.getCount() !=0) {
+                    MainActivity.sqLiteDatabase.execSQL("UPDATE OrderHistoryTable SET no_of_childs ='"+currentValue+"' where order_no='"+orderNo+"'and group_index='"+groupPosition+"' and child_index='"+childPosition+"';");
+                } else {
+                    MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('"+orderNo+"','"+groupPosition+"','"+childPosition+"','"+currentValue+"');");
+                }
+
             }
         });
 
-        //TextView txtListChild = (TextView) convertView
-               // .findViewById(R.id.lblListItem);
 
-        //txtListChild.setText(childText);
         return convertView;
     }
 
@@ -303,3 +354,4 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 }
+

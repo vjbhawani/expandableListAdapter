@@ -96,7 +96,8 @@ public class MainActivity extends Activity {
 //    }
     private  void createAndInitTable() {
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT DISTINCT tbl_name from sqlite_master where tbl_name = 'MenuVerTable'", null);
-        if(false) {
+//        Log.d("no of MenuVerTable",""+cursor.getCount());
+        if(cursor.getCount() == 0) {
             sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS MenuVerTable( version FLOAT, group_name VARCHAR, child_name VARCHAR, price FLOAT);");
 
             sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CAFE MOCHA','145');");
@@ -148,9 +149,9 @@ public class MainActivity extends Activity {
 //            Log.d("group name", "" +key);
             listDataHeader.add(key);
             listDataChild.put(key,hashMap.get(key));
-//            for(String value: hashMap.get(key)) {
+            for(String value: hashMap.get(key)) {
 //                Log.d("child name",value);
-//            }
+            }
         }
     }
 
@@ -273,6 +274,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
                 } else {
                     MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('"+orderNo+"','"+groupPosition+"','"+childPosition+"','"+currentValue+"');");
                 }
+//                Log.d("group-id,child-id",groupPosition+","+childPosition);
 
             }
 
@@ -297,6 +299,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
                 } else {
                     MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('"+orderNo+"','"+groupPosition+"','"+childPosition+"','"+currentValue+"');");
                 }
+//                Log.d("group-id,child-id",groupPosition+","+childPosition);
 
             }
         });

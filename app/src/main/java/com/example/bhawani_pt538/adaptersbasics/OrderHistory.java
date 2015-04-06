@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -189,6 +190,12 @@ public class OrderHistory extends ActionBarActivity {
 //            for(String value: hashMap.get(key)) {
 //                Log.d("child name",value);
 //            }
+        }
+        for(String key:listDataChild.keySet()) {
+            Log.d("group",key);
+            for(String value:listDataChild.get(key).keySet()) {
+                Log.d("child-",value);
+            }
         }
     }
 

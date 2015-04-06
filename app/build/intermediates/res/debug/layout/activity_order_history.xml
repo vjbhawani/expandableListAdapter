@@ -1,17 +1,20 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.bhawani_pt538.adaptersbasics.OrderHistory">
+    tools:context="com.example.bhawani_pt538.adaptersbasics.OrderHistory"
+    android:weightSum="1">
+
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
         android:focusable="true"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:layout_below="@+id/newOrderButton">
 
         <LinearLayout
             android:orientation="vertical"
@@ -21,5 +24,13 @@
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Order"
+        android:id="@+id/newOrderButton"
+        android:layout_alignParentTop="true"
+         />
+</RelativeLayout>
 <!-- From: file:/Users/bhawani-pt538/AndroidStudioProjects/AdaptersBasics/app/src/main/res/layout/activity_order_history.xml -->

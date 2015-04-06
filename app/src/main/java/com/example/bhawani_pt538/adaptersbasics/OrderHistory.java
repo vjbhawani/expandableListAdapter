@@ -1,6 +1,7 @@
 package com.example.bhawani_pt538.adaptersbasics;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -9,6 +10,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -133,9 +136,28 @@ public class OrderHistory extends ActionBarActivity {
 
         }
 
-        ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
-//        scrollView.scrollTo(0,scrollView.getBottom());
-        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+
+//        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+
+        final Intent intent = new Intent(this,MainActivity.class);
+
+        Button submitButton = (Button) findViewById(R.id.newOrderButton);
+        submitButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+//                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable;",null);
+//                while(cursor.moveToNext()) {
+//                    Log.d("orderHistoryTable",cursor.getInt(0)+","+cursor.getInt(1)+","+cursor.getInt(2)+","+cursor.getInt(3));
+//                }
+
+                startActivity(intent);
+            }
+        });
+        final ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.post(new Runnable() {
+            public void run() {
+                scrollView.fullScroll(View.FOCUS_DOWN);
+            }
+        });
     }
 
 

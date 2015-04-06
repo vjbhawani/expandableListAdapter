@@ -15,15 +15,15 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
 public class OrderHistory extends ActionBarActivity {
     List<String> listDataHeader;
-    HashMap<String, HashMap<String,Float>> listDataChild;
-    HashMap<Integer,HashMap<Integer,HashMap<Integer,Integer>>> orderGrAndChildIndex;
-    HashMap<Integer,HashMap<Integer,List<String>>> indexNameMap;
+    LinkedHashMap<String, LinkedHashMap<String,Float>> listDataChild;
+    LinkedHashMap<Integer,LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>>> orderGrAndChildIndex;
+    LinkedHashMap<Integer,LinkedHashMap<Integer,List<String>>> indexNameMap;
     public static SQLiteDatabase sqLiteDatabase;
 
 
@@ -49,10 +49,10 @@ public class OrderHistory extends ActionBarActivity {
 //        }
 //
         int groupIndex = 0;
-        indexNameMap = new HashMap<>();
+        indexNameMap = new LinkedHashMap<>();
         for(String grName:listDataChild.keySet()) {
 //            Log.d("groupName",grName);
-            HashMap<Integer,List<String>> temHasMap = new HashMap<>();
+            LinkedHashMap<Integer,List<String>> temHasMap = new LinkedHashMap<>();
             int childIndex = 0;
             for(String chName:listDataChild.get(grName).keySet()) {
 //                Log.d("childName,price",chName+","+listDataChild.get(grName).get(chName));
@@ -85,19 +85,22 @@ public class OrderHistory extends ActionBarActivity {
                     if(indexNameMap.get(grIndex).containsKey(childIndex)) {
                         float itemTotal = 0;
 //                        Log.d("childIndex,childName",childIndex+indexNameMap.get(grIndex).get(childIndex).get(0));
+
+                        Cursor menuCursor = sqLiteDatabase.rawQuery("select child_name,price from MenuVerTable where group_id='"+grIndex+"' and child_id='"+childIndex+"';",null);
+                        menuCursor.moveToFirst();
                         LinearLayout horLinearLayout = new LinearLayout(this);
                         horLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
                         TextView chNameTextView = new TextView(this);
                         chNameTextView.setLayoutParams(new TableLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,ActionBar.LayoutParams.WRAP_CONTENT,0.1f));
                         chNameTextView.setBackgroundColor(Color.WHITE);
-                        chNameTextView.setText(indexNameMap.get(grIndex).get(childIndex).get(0));
+                        chNameTextView.setText(menuCursor.getString(0));
                         horLinearLayout.addView(chNameTextView);
 
                         chNameTextView = new TextView(this);
                         chNameTextView.setLayoutParams(new TableLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,ActionBar.LayoutParams.WRAP_CONTENT,0.2f));
                         chNameTextView.setBackgroundColor(Color.YELLOW);
-                        chNameTextView.setText(indexNameMap.get(grIndex).get(childIndex).get(1));
+                        chNameTextView.setText(menuCursor.getFloat(1)+"");
                         horLinearLayout.addView(chNameTextView);
 
                         chNameTextView = new TextView(this);
@@ -109,7 +112,7 @@ public class OrderHistory extends ActionBarActivity {
                         chNameTextView = new TextView(this);
                         chNameTextView.setLayoutParams(new TableLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,ActionBar.LayoutParams.WRAP_CONTENT,0.2f));
                         chNameTextView.setBackgroundColor(Color.DKGRAY);
-                        itemTotal = Float.parseFloat(indexNameMap.get(grIndex).get(childIndex).get(1))*orderGrAndChildIndex.get(orderNO).get(grIndex).get(childIndex);
+                        itemTotal = menuCursor.getFloat(1)*orderGrAndChildIndex.get(orderNO).get(grIndex).get(childIndex);
                         chNameTextView.setText(""+itemTotal);
                         total+=itemTotal;
                         horLinearLayout.addView(chNameTextView);
@@ -160,18 +163,18 @@ public class OrderHistory extends ActionBarActivity {
 
     private void prepareListDataFromDB() {
         listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, HashMap<String,Float>>();
-        HashMap<String,HashMap<String,Float>> hashMap = new HashMap<>();
+        listDataChild = new LinkedHashMap<String, LinkedHashMap<String,Float>>();
+        LinkedHashMap<String,LinkedHashMap<String,Float>> hashMap = new LinkedHashMap<>();
 
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM MenuVerTable",null);
         int i =1;
         while(cursor.moveToNext()) {
 //            Log.d("working","version: "+cursor.getFloat(0)+",group name:"+cursor.getString(1)+",child name:"+cursor.getString(2)+cursor.getFloat(3));
             if(hashMap.containsKey(cursor.getString(1))) {
-                HashMap<String,Float> arrayList = (HashMap)hashMap.get(cursor.getString(1));
+                LinkedHashMap<String,Float> arrayList = (LinkedHashMap)hashMap.get(cursor.getString(1));
                 arrayList.put(cursor.getString(2), cursor.getFloat(3));
             } else {
-                HashMap<String,Float> arrayList = new HashMap<>();
+                LinkedHashMap<String,Float> arrayList = new LinkedHashMap<>();
                 arrayList.put(cursor.getString(2), cursor.getFloat(3));
                 hashMap.put(cursor.getString(1),arrayList);
             }
@@ -200,27 +203,27 @@ public class OrderHistory extends ActionBarActivity {
     }
 
     void prepareOrderGrAndChildIndex() {
-        orderGrAndChildIndex = new HashMap<>();
+        orderGrAndChildIndex = new LinkedHashMap<>();
         Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable;",null);
         while(cursor.moveToNext()) {
 //            Log.d("orderHistoryTable", cursor.getInt(0) + "," + cursor.getInt(1) + "," + cursor.getInt(2) + "," + cursor.getInt(3));
                 if(orderGrAndChildIndex.containsKey(cursor.getInt(0))) {
                     if(orderGrAndChildIndex.get(cursor.getInt(0)).containsKey(cursor.getInt(1))) {
-                        HashMap<Integer,Integer> temList = orderGrAndChildIndex.get(cursor.getInt(0)).get(cursor.getInt(1));
+                        LinkedHashMap<Integer,Integer> temList = orderGrAndChildIndex.get(cursor.getInt(0)).get(cursor.getInt(1));
                         temList.put(cursor.getInt(2),cursor.getInt(3));
 
                     } else {
-                        HashMap<Integer,Integer> temList = new HashMap<>();
+                        LinkedHashMap<Integer,Integer> temList = new LinkedHashMap<>();
                         temList.put(cursor.getInt(2),cursor.getInt(3));
-                        HashMap<Integer,HashMap<Integer,Integer>> temHashMap = orderGrAndChildIndex.get(cursor.getInt(0));
-                        temHashMap.put(cursor.getInt(1),temList);
+                        LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>> temLinkedHashMap = orderGrAndChildIndex.get(cursor.getInt(0));
+                        temLinkedHashMap.put(cursor.getInt(1),temList);
                     }
                 }   else {
-                    HashMap<Integer,Integer> temList = new HashMap<>();
+                    LinkedHashMap<Integer,Integer> temList = new LinkedHashMap<>();
                     temList.put(cursor.getInt(2), cursor.getInt(3));
-                    HashMap<Integer,HashMap<Integer,Integer>> temHashMap = new HashMap<>();
-                    temHashMap.put(cursor.getInt(1),temList);
-                    orderGrAndChildIndex.put(cursor.getInt(0),temHashMap);
+                    LinkedHashMap<Integer,LinkedHashMap<Integer,Integer>> temLinkedHashMap = new LinkedHashMap<>();
+                    temLinkedHashMap.put(cursor.getInt(1),temList);
+                    orderGrAndChildIndex.put(cursor.getInt(0),temLinkedHashMap);
 
                 }
 

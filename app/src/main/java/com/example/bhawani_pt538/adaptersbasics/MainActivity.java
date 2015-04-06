@@ -18,7 +18,7 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    LinkedHashMap<String, List<String>> listDataChild;
     public static SQLiteDatabase sqLiteDatabase;
     int orderNo = 0;
 //    ArrayList<List<Integer>> indexContainer = new ArrayList<>();
@@ -98,23 +98,23 @@ public class MainActivity extends Activity {
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT DISTINCT tbl_name from sqlite_master where tbl_name = 'MenuVerTable'", null);
 //        Log.d("no of MenuVerTable",""+cursor.getCount());
         if(cursor.getCount() == 0) {
-            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS MenuVerTable( version FLOAT, group_name VARCHAR, child_name VARCHAR, price FLOAT);");
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS MenuVerTable( version FLOAT, group_name VARCHAR, child_name VARCHAR, price FLOAT, group_id INT, child_id INT);");
 
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CAFE MOCHA','145');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','NUTTY AFFAIR','145');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','OREO O OREO','165');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CHOCOLATE BANANA SHAKE','145');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','MADRAS MILKSHAKE','145');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CAFE MOCHA','145','0','0');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','NUTTY AFFAIR','145','0','1');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','OREO O OREO','165','0','2');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','CHOCOLATE BANANA SHAKE','145','0','3');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','MILK SHAKES','MADRAS MILKSHAKE','145','0','4');");
 
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','CUTTING EDGE CHAI','75');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','FILTER KAAPI','75');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','DIVINE HOT CHOCOLATE','145');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','HAND BEATEN COFFEE','85');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','CUTTING EDGE CHAI','75','1','0');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','FILTER KAAPI','75','1','1');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','DIVINE HOT CHOCOLATE','145','1','2');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','HOT BEVERAGES','HAND BEATEN COFFEE','85','1','3');");
 
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','THE TOADSTOOL SALAD','159');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','ROASTED EGGPLANT SALAD','159');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','CHICKEN CAME FIRST','179');");
-            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','GRACIAS','179');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','THE TOADSTOOL SALAD','159','2','0');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','ROASTED EGGPLANT SALAD','159','2','1');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','CHICKEN CAME FIRST','179','2','2');");
+            sqLiteDatabase.execSQL("INSERT INTO MenuVerTable VALUES('0.0','SALADS','GRACIAS','179','2','3');");
 
         }
         sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS OrderHistoryTable(order_no INT, group_index INT, child_index INT, no_of_childs INT);");
@@ -122,8 +122,8 @@ public class MainActivity extends Activity {
     }
     private void prepareListDataFromDB() {
         listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-        HashMap<String,List<String>> hashMap = new HashMap<>();
+        listDataChild = new LinkedHashMap<String, List<String>>();
+        LinkedHashMap<String,List<String>> hashMap = new LinkedHashMap<>();
 
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM MenuVerTable",null);
         int i =1;
@@ -132,10 +132,12 @@ public class MainActivity extends Activity {
             if(hashMap.containsKey(cursor.getString(1))) {
                 ArrayList<String> arrayList = (ArrayList)hashMap.get(cursor.getString(1));
                 arrayList.add(cursor.getString(2));
+                Log.d("db-group-name",cursor.getString(2));
             } else {
                 ArrayList<String> arrayList = new ArrayList<>();
                 arrayList.add(cursor.getString(2));
                 hashMap.put(cursor.getString(1),arrayList);
+                Log.d("db-group-name",cursor.getString(1));
             }
 
         }
@@ -205,23 +207,22 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Context _context;
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private LinkedHashMap<String, List<String>> _listDataChild;
     static public int orderNo = 0;
 
 
-
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+                                 LinkedHashMap<String, List<String>> listChildData) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
-        Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select MAX(order_no) from OrderHistoryTable;",null);
+        Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select MAX(order_no) from OrderHistoryTable;", null);
         cursor.moveToFirst();
-        if(cursor.getCount() !=0) {
+        if (cursor.getCount() != 0) {
 
             orderNo = cursor.getInt(0);
             orderNo++;
-            Log.d("no of rows","" +orderNo);
+            Log.d("no of rows", "" + orderNo);
         }
 
     }
@@ -242,7 +243,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+//        final String childText = (String) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
@@ -253,26 +254,31 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         // initializing itemTextView
 
+        Cursor menuCursor = MainActivity.sqLiteDatabase.rawQuery("select child_name from MenuVerTable where group_id='" + groupPosition + "' and child_id='" + childPosition + "';", null);
         TextView textView = (TextView) convertView.findViewById(R.id.itemTextView);
-        String childName = (String) getChild(groupPosition,childPosition);
-        textView.setText(childName);
+//        String childName = (String) getChild(groupPosition,childPosition);
+        menuCursor.moveToFirst();
+        Log.d("group-pos,child-pos", groupPosition + "," + childPosition);
+        textView.setText(menuCursor.getString(0));
 
+//        TextView textViewCount =(TextView) cView.findViewById(R.id.countTextView);
+//        textView.setText(Integer.toString(0));
 
         Button plusButton = (Button) convertView.findViewById(R.id.plusButton);
-        plusButton.setOnClickListener(new View.OnClickListener(){
+        plusButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 //                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
-                TextView textView =(TextView) cView.findViewById(R.id.countTextView);
-                int currentValue = Integer.parseInt((String)textView.getText());
+                TextView textView = (TextView) cView.findViewById(R.id.countTextView);
+                int currentValue = Integer.parseInt((String) textView.getText());
                 currentValue++;
                 textView.setText(Integer.toString(currentValue));
 
-                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable where order_no='"+orderNo+"'and group_index='"+groupPosition+"' and child_index='"+childPosition+"';",null);
+                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable where order_no='" + orderNo + "'and group_index='" + groupPosition + "' and child_index='" + childPosition + "';", null);
                 cursor.moveToFirst();
-                if(cursor.getCount() !=0) {
+                if (cursor.getCount() != 0) {
                     MainActivity.sqLiteDatabase.execSQL("UPDATE OrderHistoryTable SET no_of_childs ='" + currentValue + "' where order_no='" + orderNo + "'and group_index='" + groupPosition + "' and child_index='" + childPosition + "';");
                 } else {
-                    MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('"+orderNo+"','"+groupPosition+"','"+childPosition+"','"+currentValue+"');");
+                    MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('" + orderNo + "','" + groupPosition + "','" + childPosition + "','" + currentValue + "');");
                 }
 //                Log.d("group-id,child-id",groupPosition+","+childPosition);
 
@@ -282,22 +288,22 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         });
 
         Button minusButton = (Button) convertView.findViewById(R.id.minusButton);
-        minusButton.setOnClickListener(new View.OnClickListener(){
+        minusButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 //                Toast.makeText(cView.getContext(), "plus" + " group-position: "+ groupPosition + "child-position: "+ childPosition, Toast.LENGTH_LONG).show();
-                TextView textView =(TextView) cView.findViewById(R.id.countTextView);
-                int currentValue = Integer.parseInt((String)textView.getText());
+                TextView textView = (TextView) cView.findViewById(R.id.countTextView);
+                int currentValue = Integer.parseInt((String) textView.getText());
                 currentValue--;
-                if(currentValue >= 0) {
+                if (currentValue >= 0) {
                     textView.setText(Integer.toString(currentValue));
                 }
 
-                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable where order_no='"+orderNo+"'and group_index='"+groupPosition+"' and child_index='"+childPosition+"';",null);
+                Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select * from OrderHistoryTable where order_no='" + orderNo + "'and group_index='" + groupPosition + "' and child_index='" + childPosition + "';", null);
                 cursor.moveToFirst();
-                if(cursor.getCount() !=0) {
-                    MainActivity.sqLiteDatabase.execSQL("UPDATE OrderHistoryTable SET no_of_childs ='"+currentValue+"' where order_no='"+orderNo+"'and group_index='"+groupPosition+"' and child_index='"+childPosition+"';");
+                if (cursor.getCount() != 0) {
+                    MainActivity.sqLiteDatabase.execSQL("UPDATE OrderHistoryTable SET no_of_childs ='" + currentValue + "' where order_no='" + orderNo + "'and group_index='" + groupPosition + "' and child_index='" + childPosition + "';");
                 } else {
-                    MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('"+orderNo+"','"+groupPosition+"','"+childPosition+"','"+currentValue+"');");
+                    MainActivity.sqLiteDatabase.execSQL("INSERT INTO OrderHistoryTable VALUES('" + orderNo + "','" + groupPosition + "','" + childPosition + "','" + currentValue + "');");
                 }
 //                Log.d("group-id,child-id",groupPosition+","+childPosition);
 
@@ -332,7 +338,14 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String headerTitle = (String) getGroup(groupPosition);
+        Cursor menuCursor = MainActivity.sqLiteDatabase.rawQuery("select group_name from MenuVerTable where group_id='" + groupPosition + "';", null);
+//        TextView textView = (TextView) convertView.findViewById(R.id.itemTextView);
+//        String childName = (String) getChild(groupPosition,childPosition);
+        menuCursor.moveToFirst();
+//        textView.setText(menuCursor.getString(0));
+
+//        String headerTitle = (String) getGroup(groupPosition);
+        String headerTitle = menuCursor.getString(0);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -356,5 +369,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
+
+    
 }
 

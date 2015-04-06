@@ -245,15 +245,22 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 //        final String childText = (String) getChild(groupPosition, childPosition);
 
-        if (convertView == null) {
+//        if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item, null);
-        }
+//        }
         final View cView = convertView;
 
         // initializing itemTextView
-
+        Cursor cursor = MainActivity.sqLiteDatabase.rawQuery("select no_of_childs from OrderHistoryTable where order_no='" + orderNo + "'and group_index='" + groupPosition + "' and child_index='" + childPosition + "';", null);
+        cursor.moveToFirst();
+        TextView countTextView = (TextView) cView.findViewById(R.id.countTextView);
+        if(cursor.getCount() == 0) {
+            countTextView.setText("0");
+        } else {
+            countTextView.setText(cursor.getInt(0)+"");
+        }
         Cursor menuCursor = MainActivity.sqLiteDatabase.rawQuery("select child_name from MenuVerTable where group_id='" + groupPosition + "' and child_id='" + childPosition + "';", null);
         TextView textView = (TextView) convertView.findViewById(R.id.itemTextView);
 //        String childName = (String) getChild(groupPosition,childPosition);
@@ -370,6 +377,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    
+
 }
 

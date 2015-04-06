@@ -129,13 +129,13 @@ public class OrderHistory extends ActionBarActivity {
             chNameTextView.setText("Total:"+total);
             temLinearLayout.addView(chNameTextView);
             linearLayout.addView(temLinearLayout);
-            ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
-//        scrollView.scrollTo(0,scrollView.getBottom());
-            scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+
 
         }
 
-
+        ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+//        scrollView.scrollTo(0,scrollView.getBottom());
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
     }
 
 
